@@ -12,6 +12,7 @@ version = "0.1.0"
 [dependencies]
 gleam_stdlib = "~> 0.24"
 amqp_client = "~> 3.11"
+rabbit_common = "~> 3.11"
 
 [dev-dependencies]
 gleeunit = "~> 0.6"

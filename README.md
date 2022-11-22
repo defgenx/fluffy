@@ -1,8 +1,10 @@
 # Fluffy
+
+![CI](https://github.com/defgenx/gxid/workflows/test/badge.svg?branch=master)
 [![Package Version](https://img.shields.io/hexpm/v/fluffy)](https://hex.pm/packages/fluffy)
 [![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/fluffy/)
 
-![](small_fluffy.png)
+![](assets/small_fluffy.png)
 
 A simple Gleam AMQP client wrapper based on Erlang implementation
 
