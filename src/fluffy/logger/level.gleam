@@ -22,6 +22,12 @@ pub external type Info
 // debug-level messages
 pub external type Debug
 
+// all levels
+pub external type All
+
+// No level
+pub external type None
+
 pub type Level {
   Emergency
   Alert
@@ -31,4 +37,10 @@ pub type Level {
   Notice
   Info
   Debug
+}
+
+pub type LevelConfig {
+  Level
+  All
+  None
 }

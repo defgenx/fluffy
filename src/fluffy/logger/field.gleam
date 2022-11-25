@@ -1,4 +1,9 @@
 import gleam/dynamic.{Dynamic}
+import gleam/erlang/atom.{Atom}
+
+pub type Fields {
+  Fields(List(Field))
+}
 
 pub opaque type Field {
   Field(key: String, value: Dynamic)
