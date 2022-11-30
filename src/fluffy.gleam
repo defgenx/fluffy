@@ -1,20 +1,34 @@
-import gleam/erlang/atom.{Atom}
 import gleam/io
-import gleam/map.{Map}
-import gleam/dynamic
-import fluffy/logger/field.{Fields}
-import fluffy/logger/arg.{Arg, Args}
-import fluffy/logger.{Glog}
+import gleam/option.{None}
+import fluffy/amqp091/connection
+import fluffy/amqp091/channel
+import fluffy/amqp091/core.{AMQPParamsNetwork}
+import gleam/erlang/charlist
+import fluffy/amqp091/amqp_auth_mechanisms
 
 pub fn main() {
-  logger.new()
-  |> logger.add("wooxvd", "scvvd")
-  |> logger.add_field(field.new("woo", "zoo"))
-  |> logger.add_fields(Fields([field.new("foo", "bar"), field.new("bar", 123)]))
-  |> logger.emergencyf(
-    "nice one dude ~p ~p",
-    Args([arg.new("ok"), arg.new("foo")]),
-  )
+  assert Ok(c) =
+    connection.open(
+      AMQPParamsNetwork(
+        username: "guest",
+        password: "guest",
+        host: charlist.from_string("localhost"),
+        port: 5682,
+        virtual_host: "/",
+        channel_max: 0,
+        frame_max: 0,
+        heartbeat: 10,
+        connection_timeout: 60000,
+        ssl_options: None,
+        auth_mechanisms: [
+          amqp_auth_mechanisms.plain,
+          amqp_auth_mechanisms.amqplain,
+        ],
+        client_properties: [],
+        socket_options: [],
+      ),
+      "fluffy",
+    )
 
-  io.debug("foo")
+  io.debug(channel.open(c, None))
 }
