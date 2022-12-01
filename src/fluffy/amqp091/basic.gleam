@@ -1,7 +1,146 @@
-import fluffy/amqp091/core.{AMQPMessage, Basic, BasicPublish, Table}
+import fluffy/amqp091/core.{AMQPError, Table}
 import gleam/erlang/atom.{Atom}
 import gleam/erlang/process.{Pid}
 import fluffy/amqp091/channel.{Channel}
+
+pub type Basic {
+  Basic(
+    content_type: String,
+    content_encoding: String,
+    headers: Table,
+    delivery_mode: Int,
+    priority: Int,
+    correlation_id: String,
+    reply_to: String,
+    expiration: String,
+    message_id: String,
+    timestamp: Int,
+    typ: String,
+    user_id: String,
+    app_id: String,
+    cluster_id: String,
+  )
+}
+
+pub type BasicQos {
+  BasicQos(prefetch_size: Int, prefetch_count: Int, global: Bool)
+}
+
+pub type BasicQosOk {
+  BasicQosOk
+}
+
+pub type BasicGet {
+  BasicGet(ticket: Int, queue: String, no_ack: Bool)
+}
+
+pub type BasicGetOk {
+  BasicGetOk(
+    delivery_tag: Int,
+    redelivered: Bool,
+    exchange: String,
+    routing_key: String,
+    message_count: Int,
+  )
+}
+
+pub type BasicGetEmpty {
+  BasicGetEmpty(cluster_id: String)
+}
+
+pub type BasicAck {
+  BasicAck(delivery_tag: Int, multiple: Bool)
+}
+
+pub type BasicConsume {
+  BasicConsume(
+    ticket: Int,
+    queue: String,
+    consumer_tag: String,
+    no_local: Bool,
+    no_ack: Bool,
+    exclusive: Bool,
+    nowait: Bool,
+    arguments: Table,
+  )
+}
+
+pub type BasicConsumeOk {
+  BasicConsumeOk(consumer_tag: String)
+}
+
+pub type BasicPublish {
+  BasicPublish(
+    ticket: Int,
+    exchange: String,
+    routing_key: String,
+    mandatory: Bool,
+    immediate: Bool,
+  )
+}
+
+pub type BasicReturn {
+  BasicReturn(
+    reply_code: Int,
+    reply_text: String,
+    exchange: String,
+    routing_key: String,
+  )
+}
+
+pub type BasicCancel {
+  BasicCancel(consumer_tag: String, nowait: Bool)
+}
+
+pub type BasicCancelOk {
+  BasicCancelOk(consumer_tag: String)
+}
+
+pub type BasicDeliver {
+  BasicDeliver(
+    consumer_tag: String,
+    delivery_tag: Int,
+    redelivered: Bool,
+    exchange: String,
+    routing_key: String,
+  )
+}
+
+pub type BasicReject {
+  BasicReject(delivery_tag: String, requeue: Bool)
+}
+
+pub type BasicRecoverAsync {
+  BasicRecoverAsync(requeue: Bool)
+}
+
+pub type BasicRecover {
+  BasicRecover(requeue: Bool)
+}
+
+pub type BasicRecoverOk {
+  BasicRecoverOk
+}
+
+pub type BasicNack {
+  BasicNack(delivery_tag: Int, multiple: Bool, requeue: Bool)
+}
+
+pub type BasicCredit {
+  BasicCredit(consumer_tag: String, credit: Int, drain: Int)
+}
+
+pub type BasicCreditOk {
+  BasicCreditOk(available: Int)
+}
+
+pub type BasicCreditDrained {
+  BasicCreditDrained(consumer_tag: String, credit_drained: Int)
+}
+
+pub type AMQPMessage {
+  AMQPMessage(props: Basic, payload: String)
+}
 
 pub type Publishing {
   Publishing(
@@ -39,7 +178,7 @@ fn publish(
   mandatory: Bool,
   immediate: Bool,
   message: Publishing,
-) -> Result(String, String) {
+) -> Result(String, AMQPError) {
   let basic_publish =
     BasicPublish(
       ticket: 0,
@@ -74,9 +213,9 @@ fn publish(
     )
   {
     Ok(ok) -> Ok(atom.to_string(ok))
-    Error(reason) -> Error(atom.to_string(reason))
+    Error(reason) -> Error(reason)
   }
 }
 
-external fn do_call(Pid, BasicPublish, AMQPMessage) -> Result(Atom, Atom) =
+external fn do_call(Pid, BasicPublish, AMQPMessage) -> Result(Atom, AMQPError) =
   "amqp_channel" "call"

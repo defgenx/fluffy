@@ -30,5 +30,8 @@ pub fn main() {
       "fluffy",
     )
 
-  io.debug(channel.open(c, None))
+  assert Ok(chan) = channel.open(c, None)
+
+  io.debug(channel.close(chan))
+  io.debug(connection.close(c))
 }
